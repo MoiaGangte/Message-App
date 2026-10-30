@@ -1,0 +1,7 @@
+{
+  "name": "ChatLink",
+  "description": "A real-time messaging web app with Google Sign-in, one-to-one and group chats, status indicators, and media sharing.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+

@@ -1,0 +1,76 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile representation in ChatLink",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Unique Firebase User ID", "maxLength": 128 },
+        "displayName": { "type": "string", "description": "Display name of user", "maxLength": 100 },
+        "email": { "type": "string", "description": "Email address of user", "maxLength": 255 },
+        "photoURL": { "type": "string", "description": "Avatar URL", "maxLength": 1000 },
+        "about": { "type": "string", "description": "User status bio or about text", "maxLength": 200 },
+        "online": { "type": "boolean", "description": "Whether user is currently active" },
+        "lastSeen": { "type": "string", "description": "Last seen ISO timestamp string", "maxLength": 50 },
+        "createdAt": { "type": "string", "description": "Account creation timestamp", "maxLength": 50 }
+      },
+      "required": ["uid", "displayName", "email"]
+    },
+    "Chat": {
+      "title": "Chat",
+      "description": "One-to-one or group conversation metadata",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Chat identifier", "maxLength": 128 },
+        "isGroup": { "type": "boolean", "description": "Indicates if chat is a group conversation" },
+        "name": { "type": "string", "description": "Group chat name", "maxLength": 100 },
+        "groupAvatar": { "type": "string", "description": "Group chat picture URL or emoji icon", "maxLength": 1000 },
+        "createdBy": { "type": "string", "description": "UID of chat creator", "maxLength": 128 },
+        "participants": { "type": "array", "description": "List of participant user IDs" },
+        "participantDetails": { "type": "object", "description": "Map of participant details keyed by UID" },
+        "lastMessage": { "type": "object", "description": "Summary of the most recent message" },
+        "lastMessageTimestamp": { "type": "number", "description": "Epoch millisecond of last message" },
+        "unreadCounts": { "type": "object", "description": "Unread message counter map for each participant" },
+        "typingUsers": { "type": "object", "description": "Map of participant UIDs currently typing" },
+        "createdAt": { "type": "string", "description": "Creation timestamp", "maxLength": 50 },
+        "updatedAt": { "type": "string", "description": "Last update timestamp", "maxLength": 50 }
+      },
+      "required": ["isGroup", "participants"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "Chat message record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Message document ID", "maxLength": 128 },
+        "chatId": { "type": "string", "description": "Parent chat ID", "maxLength": 128 },
+        "senderId": { "type": "string", "description": "UID of the message sender", "maxLength": 128 },
+        "senderName": { "type": "string", "description": "Display name of sender at time of message", "maxLength": 100 },
+        "senderPhoto": { "type": "string", "description": "Avatar of sender", "maxLength": 1000 },
+        "text": { "type": "string", "description": "Message content text", "maxLength": 5000 },
+        "imageUrl": { "type": "string", "description": "Optional attached image data or URL", "maxLength": 1000000 },
+        "type": { "type": "string", "description": "Message type (text, image)", "maxLength": 20 },
+        "timestamp": { "type": "number", "description": "Timestamp in milliseconds" },
+        "status": { "type": "string", "description": "sent, delivered, or read", "maxLength": 20 },
+        "readBy": { "type": "array", "description": "Array of participant UIDs who have read the message" },
+        "isDeleted": { "type": "boolean", "description": "Whether message was deleted" },
+        "createdAt": { "type": "string", "description": "Creation timestamp", "maxLength": 50 }
+      },
+      "required": ["chatId", "senderId", "senderName", "type"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "User profiles indexed by UID for searching and presence"
+    },
+    "/chats/{chatId}": {
+      "schema": { "$ref": "#/entities/Chat" },
+      "description": "Direct and group chat rooms"
+    },
+    "/chats/{chatId}/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/Message" },
+      "description": "Messages subcollection inside each chat room"
+    }
+  }
+}
